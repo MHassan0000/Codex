@@ -103,7 +103,7 @@ const AuthForm = <T extends FieldValues>({
                                             <FileUpload
                                                 type="image"
                                                 accept="image/*"
-                                                placeholder="Upload your ID"
+                                                placeholder="Upload your university ID card"
                                                 folder="ids"
                                                 variant="dark"
                                                 onFileChange={field.onChange}

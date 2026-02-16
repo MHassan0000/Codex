@@ -1,46 +1,186 @@
 "use client";
 
-import React from "react";
+import { IKImage, ImageKitProvider, IKUpload, IKVideo } from "imagekitio-next";
+import config from "@/lib/config";
+import { useRef, useState } from "react";
+import { Upload } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
-interface FileUploadProps {
-    type: string;
+const {
+    env: {
+        imagekit: { publicKey, urlEndpoint },
+    },
+} = config;
+
+const authenticator = async () => {
+    try {
+        const response = await fetch(`${config.env.apiEndpoint}/api/auth/imagekit`);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+
+            throw new Error(
+                `Request failed with status ${response.status}: ${errorText}`,
+            );
+        }
+
+        const data = await response.json();
+
+        const { signature, expire, token } = data;
+
+        return { token, expire, signature };
+    } catch (error: any) {
+        throw new Error(`Authentication request failed: ${error.message}`);
+    }
+};
+
+interface Props {
+    type: "image" | "video";
     accept: string;
     placeholder: string;
     folder: string;
-    variant: string;
-    onFileChange: (value: string) => void;
+    variant: "dark" | "light";
+    onFileChange: (filePath: string) => void;
+    value?: string;
 }
 
 const FileUpload = ({
+    type,
+    accept,
     placeholder,
+    folder,
+    variant,
     onFileChange,
-}: FileUploadProps) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            onFileChange(file.name);
+    value,
+}: Props) => {
+    const ikUploadRef = useRef(null);
+    const [file, setFile] = useState<{ filePath: string | null }>({
+        filePath: value ?? null,
+    });
+    const [progress, setProgress] = useState(0);
+
+    const styles = {
+        button:
+            variant === "dark"
+                ? "bg-dark-300"
+                : "bg-light-600 border-gray-100 border",
+        placeholder: variant === "dark" ? "text-light-100" : "text-slate-500",
+        text: variant === "dark" ? "text-light-100" : "text-dark-400",
+    };
+
+    const onError = (error: any) => {
+        console.log(error);
+
+        toast({
+            title: `${type} upload failed`,
+            description: `Your ${type} could not be uploaded. Please try again.`,
+            variant: "destructive",
+        });
+    };
+
+    const onSuccess = (res: any) => {
+        setFile(res);
+        onFileChange(res.filePath);
+
+        toast({
+            title: `${type} uploaded successfully`,
+            description: `${res.filePath} uploaded successfully!`,
+        });
+    };
+
+    const onValidate = (file: File) => {
+        if (type === "image") {
+            if (file.size > 20 * 1024 * 1024) {
+                toast({
+                    title: "File size too large",
+                    description: "Please upload a file that is less than 20MB in size",
+                    variant: "destructive",
+                });
+
+                return false;
+            }
+        } else if (type === "video") {
+            if (file.size > 50 * 1024 * 1024) {
+                toast({
+                    title: "File size too large",
+                    description: "Please upload a file that is less than 50MB in size",
+                    variant: "destructive",
+                });
+                return false;
+            }
         }
+
+        return true;
     };
 
     return (
-        <div className="flex flex-col gap-2">
-            <label className="flex items-center justify-center gap-3 w-full h-28 border border-dashed border-white/15 rounded-sm bg-white/2 hover:bg-white/4 transition-colors duration-300 cursor-pointer group">
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleChange}
-                    className="hidden"
-                />
-                <div className="flex flex-col items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-orange-accent/10 flex items-center justify-center group-hover:bg-orange-accent/20 transition-colors duration-300">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path d="M7 1V13M1 7H13" stroke="#ff4d00" strokeWidth="1.5" strokeLinecap="round" />
-                        </svg>
-                    </div>
-                    <span className="text-xs text-white/40">{placeholder}</span>
+        <ImageKitProvider
+            publicKey={publicKey}
+            urlEndpoint={urlEndpoint}
+            authenticator={authenticator}
+        >
+            <IKUpload
+                ref={ikUploadRef}
+                onError={onError}
+                onSuccess={onSuccess}
+                useUniqueFileName={true}
+                validateFile={onValidate}
+                onUploadStart={() => setProgress(0)}
+                onUploadProgress={({ loaded, total }) => {
+                    const percent = Math.round((loaded / total) * 100);
+
+                    setProgress(percent);
+                }}
+                folder={folder}
+                accept={accept}
+                className="hidden"
+            />
+
+            <button
+                className="flex items-center gap-3 w-full px-4 py-3 border border-dashed border-white/15 rounded-sm bg-white/3 hover:bg-white/5 transition-colors duration-300 cursor-pointer"
+                onClick={(e) => {
+                    e.preventDefault();
+                    if (ikUploadRef.current) {
+                        // @ts-ignore
+                        ikUploadRef.current?.click();
+                    }
+                }}
+            >
+                <div className="w-8 h-8 rounded-full bg-orange-accent/10 flex items-center justify-center shrink-0">
+                    <Upload size={14} className="text-orange-accent" />
                 </div>
-            </label>
-        </div>
+
+                <p className="text-sm text-white/40 truncate">
+                    {file.filePath ?? placeholder}
+                </p>
+            </button>
+
+            {progress > 0 && progress !== 100 && (
+                <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden mt-1">
+                    <div
+                        className="h-full bg-orange-accent rounded-full transition-all duration-300"
+                        style={{ width: `${progress}%` }}
+                    />
+                </div>
+            )}
+
+            {file.filePath &&
+                (type === "image" ? (
+                    <IKImage
+                        alt={file.filePath!}
+                        path={file.filePath!}
+                        width={500}
+                        height={300}
+                    />
+                ) : type === "video" ? (
+                    <IKVideo
+                        path={file.filePath!}
+                        controls={true}
+                        className="h-96 w-full rounded-xl"
+                    />
+                ) : null)}
+        </ImageKitProvider>
     );
 };
 
