@@ -3,10 +3,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 20);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 border border-white">
+        <nav
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+                    ? "bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/6"
+                    : "bg-transparent border-b border-transparent"
+                }`}
+        >
             <div className="mx-auto max-w-7xl px-6 lg:px-10">
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}

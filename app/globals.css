@@ -183,6 +183,28 @@ body {
   --sidebar-ring: #ff4d00;
 }
 
+/* ─── Book cover size variants ─── */
+.book-cover_extra_small {
+  width: 56px;
+  height: 80px;
+}
+.book-cover_small {
+  width: 80px;
+  height: 112px;
+}
+.book-cover_medium {
+  width: 120px;
+  height: 170px;
+}
+.book-cover_regular {
+  width: 174px;
+  height: 246px;
+}
+.book-cover_wide {
+  width: 280px;
+  height: 394px;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -190,4 +212,13 @@ body {
   body {
     @apply text-foreground;
   }
+}
+
+/* ─── Scrollbar hide utility ─── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
