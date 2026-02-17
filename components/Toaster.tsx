@@ -2,20 +2,10 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
 const Toaster = () => {
-    const { toasts, dismiss } = useToast();
-    const [visible, setVisible] = useState<string[]>([]);
-
-    useEffect(() => {
-        toasts.forEach((t) => {
-            if (!visible.includes(t.id)) {
-                setVisible((prev) => [...prev, t.id]);
-            }
-        });
-    }, [toasts, visible]);
+    const { toasts, remove } = useToast();
 
     if (toasts.length === 0) return null;
 
@@ -52,8 +42,8 @@ const Toaster = () => {
                             )}
                         </div>
                         <button
-                            onClick={() => dismiss(toast.id)}
-                            className="shrink-0 text-white/30 hover:text-white/60 transition-colors"
+                            onClick={() => remove(toast.id)}
+                            className="shrink-0 text-white/30 hover:text-white/60 transition-colors cursor-pointer"
                         >
                             <X size={14} />
                         </button>
@@ -65,3 +55,4 @@ const Toaster = () => {
 };
 
 export default Toaster;
+

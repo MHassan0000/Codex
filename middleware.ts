@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse, NextRequest } from "next/server";
 
-const protectedRoutes = ["/", "/Profile"];
+const protectedRoutes = ["/Profile"];
 const authRoutes = ["/sign-in", "/sign-up"];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
