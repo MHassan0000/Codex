@@ -2,12 +2,7 @@
 
 import AuthForm from "@/components/AuthForm";
 import { signInSchema } from "@/lib/validations";
-
-const signInWithCredentials = async (data: { email: string; password: string }) => {
-    // Placeholder — will integrate with backend later
-    console.log("Sign in:", data);
-    return { success: true };
-};
+import { signInWithCredentials } from "@/lib/actions/auth";
 
 const SignInPage = () => (
     <AuthForm

@@ -2,18 +2,8 @@
 
 import AuthForm from "@/components/AuthForm";
 import { signUpSchema } from "@/lib/validations";
+import { signUp } from "@/lib/actions/auth";
 
-const signUpWithCredentials = async (data: {
-    fullName: string;
-    email: string;
-    universityId: number;
-    universityCard: string;
-    password: string;
-}) => {
-    // Placeholder — will integrate with backend later
-    console.log("Sign up:", data);
-    return { success: true };
-};
 
 const SignUpPage = () => (
     <AuthForm
@@ -26,7 +16,7 @@ const SignUpPage = () => (
             universityCard: "",
             password: "",
         }}
-        onSubmit={signUpWithCredentials}
+        onSubmit={signUp}
     />
 );
 
