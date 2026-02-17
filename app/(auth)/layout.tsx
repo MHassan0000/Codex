@@ -1,7 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
+    const session = await auth();
+
+    if (session) redirect("/");
+
     return (
         <div className="min-h-screen bg-[#050505] flex flex-col lg:flex-row">
             {/* Cover image — on top for mobile, right side for desktop */}
