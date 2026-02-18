@@ -4,13 +4,30 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import BookList from "@/components/Booklist";
 import { sampleBooks } from "@/constants";
-import { Mail, GraduationCap, CalendarDays, BookOpen } from "lucide-react";
+import { Mail, GraduationCap, CalendarDays, BookOpen, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import { db } from "@/database/drizzle";
+import { users } from "@/database/schema";
+import { eq } from "drizzle-orm";
+import config from "@/lib/config";
 
 const ProfilePage = async () => {
     const session = await auth();
     if (!session?.user) redirect("/sign-in");
 
     const { user } = session;
+
+    const dbUser = await db
+        .select({ universityCard: users.universityCard, universityId: users.universityId })
+        .from(users)
+        .where(eq(users.id, user.id!))
+        .limit(1);
+
+    const universityCardPath = dbUser[0]?.universityCard;
+    const universityCard = universityCardPath
+        ? `${config.env.imagekit.urlEndpoint}${universityCardPath}`
+        : null;
+    const universityId = dbUser[0]?.universityId;
 
     const borrowedBooks = sampleBooks.slice(0, 4).map((book) => ({
         id: book.id,
@@ -43,11 +60,37 @@ const ProfilePage = async () => {
                         </div>
                         <div className="flex items-center gap-2 text-sm text-white/50">
                             <GraduationCap size={14} className="text-orange-accent/70" />
-                            <span>University Student</span>
+                            <span>ID: {universityId}</span>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* University ID Card */}
+            {universityCard && (
+                <div className="mt-10">
+                    <div className="flex items-center gap-2 mb-4">
+                        <ShieldCheck size={16} className="text-orange-accent/70" />
+                        <h2 className="text-sm font-semibold uppercase tracking-widest text-white/50">
+                            University ID
+                        </h2>
+                    </div>
+                    <div className="relative w-full max-w-sm rounded-lg overflow-hidden border border-white/6 bg-white/3 group">
+                        <Image
+                            src={universityCard}
+                            alt="University ID Card"
+                            width={400}
+                            height={250}
+                            className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute bottom-3 left-4 flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                            <span className="text-xs text-white/70 font-mono uppercase tracking-wider">Verified</span>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-10">
