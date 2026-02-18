@@ -22,7 +22,7 @@ const BookList = ({ title, books, containerClassName }: BookListProps) => {
                 {title}
             </h2>
 
-            <ul className="mt-8 flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+            <ul className="mt-8 py-5 flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
                 {books.map((book) => (
                     <BookCard
                         key={book.id}
