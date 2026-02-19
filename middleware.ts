@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse, NextRequest } from "next/server";
 
-const protectedRoutes = ["/Profile"];
+const protectedRoutes = ["/Profile", "/admin"];
 const authRoutes = ["/sign-in", "/sign-up"];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,7 +12,9 @@ export default auth((req: any) => {
   const isAuthRoute = authRoutes.some((route) =>
     nextUrl.pathname.startsWith(route)
   );
-  const isProtectedRoute = protectedRoutes.includes(nextUrl.pathname);
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    nextUrl.pathname.startsWith(route)
+  );
   const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
 
   // Always allow auth API routes
