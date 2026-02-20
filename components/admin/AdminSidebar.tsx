@@ -14,6 +14,8 @@ import {
     UserCheck,
     LogOut,
     X,
+    PanelLeftClose,
+    PanelLeft,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -24,7 +26,9 @@ interface AdminSidebarProps {
         };
     };
     isOpen: boolean;
+    collapsed: boolean;
     onClose: () => void;
+    onCollapseToggle: () => void;
 }
 
 const navItems = [
@@ -35,8 +39,14 @@ const navItems = [
     { href: "/admin/account-requests", label: "Account Requests", icon: UserCheck },
 ];
 
-const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
+const AdminSidebar = ({ session, isOpen, collapsed, onClose, onCollapseToggle }: AdminSidebarProps) => {
     const pathname = usePathname();
+
+    const sidebarClass = [
+        "admin-sidebar",
+        isOpen ? "open" : "",
+        collapsed ? "collapsed" : "",
+    ].filter(Boolean).join(" ");
 
     return (
         <>
@@ -46,7 +56,7 @@ const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
                 onClick={onClose}
             />
 
-            <aside className={`admin-sidebar${isOpen ? " open" : ""}`}>
+            <aside className={sidebarClass}>
                 <div className="admin-sidebar-logo">
                     <Link href="/admin">
                         <Image
@@ -56,9 +66,9 @@ const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
                             height={40}
                             className="invert"
                         />
-                        <span>Codex</span>
+                        <span className="sidebar-label">Codex</span>
                     </Link>
-                    <span className="admin-badge">Admin</span>
+                    <span className="admin-badge sidebar-label">Admin</span>
                     <button
                         className="admin-sidebar-close"
                         onClick={onClose}
@@ -69,6 +79,18 @@ const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
                 </div>
 
                 <nav className="admin-nav">
+                    {/* Desktop collapse toggle — above nav links */}
+                    <button
+                        className="admin-collapse-toggle"
+                        onClick={onCollapseToggle}
+                        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                    >
+                        {collapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={18} />}
+                        <span className="sidebar-label">
+                            {collapsed ? "Expand" : "Collapse"}
+                        </span>
+                    </button>
+
                     <ul>
                         {navItems.map((item) => {
                             const isActive =
@@ -82,9 +104,10 @@ const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
                                         href={item.href}
                                         className={`admin-nav-link${isActive ? " active" : ""}`}
                                         onClick={onClose}
+                                        title={collapsed ? item.label : undefined}
                                     >
                                         <item.icon size={18} />
-                                        {item.label}
+                                        <span className="sidebar-label">{item.label}</span>
                                     </Link>
                                 </li>
                             );
@@ -106,7 +129,7 @@ const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
                                 {getInitials(session?.user?.name || "A")}
                             </AvatarFallback>
                         </Avatar>
-                        <div className="admin-footer-info">
+                        <div className="admin-footer-info sidebar-label">
                             <p className="admin-footer-name">
                                 {session?.user?.name || "Admin"}
                             </p>
@@ -116,7 +139,7 @@ const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
                         </div>
                         <button
                             onClick={() => signOut({ callbackUrl: "/" })}
-                            className="admin-signout-btn"
+                            className="admin-signout-btn sidebar-label"
                             title="Sign out"
                         >
                             <LogOut size={16} />
@@ -129,3 +152,4 @@ const AdminSidebar = ({ session, isOpen, onClose }: AdminSidebarProps) => {
 };
 
 export default AdminSidebar;
+

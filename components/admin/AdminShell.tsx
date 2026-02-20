@@ -11,13 +11,18 @@ interface AdminShellProps {
 
 const AdminShell = ({ session, children }: AdminShellProps) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [collapsed, setCollapsed] = useState(false);
+
+    const rootClass = `admin-root${collapsed ? " sidebar-collapsed" : ""}`;
 
     return (
-        <div className="admin-root">
+        <div className={rootClass}>
             <AdminSidebar
                 session={session}
                 isOpen={sidebarOpen}
+                collapsed={collapsed}
                 onClose={() => setSidebarOpen(false)}
+                onCollapseToggle={() => setCollapsed((prev) => !prev)}
             />
             <div className="admin-main">
                 <AdminHeader
@@ -33,3 +38,4 @@ const AdminShell = ({ session, children }: AdminShellProps) => {
 };
 
 export default AdminShell;
+
