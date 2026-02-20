@@ -138,7 +138,12 @@ const FileUpload = ({
             />
 
             <button
-                className="flex items-center gap-3 w-full px-4 py-3 border border-dashed border-white/15 rounded-sm bg-white/3 hover:bg-white/5 transition-colors duration-300 cursor-pointer"
+                className={cn(
+                    "flex items-center gap-3 w-full px-4 py-3 border border-dashed rounded-sm transition-colors duration-300 cursor-pointer",
+                    variant === "dark"
+                        ? "border-white/15 bg-white/3 hover:bg-white/5"
+                        : "border-slate-300 bg-slate-50 hover:bg-slate-100"
+                )}
                 onClick={(e) => {
                     e.preventDefault();
                     if (ikUploadRef.current) {
@@ -147,19 +152,31 @@ const FileUpload = ({
                     }
                 }}
             >
-                <div className="w-8 h-8 rounded-full bg-orange-accent/10 flex items-center justify-center shrink-0">
-                    <Upload size={14} className="text-orange-accent" />
+                <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
+                    variant === "dark" ? "bg-orange-accent/10" : "bg-orange-500/10"
+                )}>
+                    <Upload size={14} className={variant === "dark" ? "text-orange-accent" : "text-orange-500"} />
                 </div>
 
-                <p className="text-sm text-white/40 truncate">
+                <p className={cn(
+                    "text-sm truncate",
+                    variant === "dark" ? "text-white/40" : "text-slate-400"
+                )}>
                     {file.filePath ?? placeholder}
                 </p>
             </button>
 
             {progress > 0 && progress !== 100 && (
-                <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden mt-1">
+                <div className={cn(
+                    "w-full h-1.5 rounded-full overflow-hidden mt-1",
+                    variant === "dark" ? "bg-white/10" : "bg-slate-200"
+                )}>
                     <div
-                        className="h-full bg-orange-accent rounded-full transition-all duration-300"
+                        className={cn(
+                            "h-full rounded-full transition-all duration-300",
+                            variant === "dark" ? "bg-orange-accent" : "bg-orange-500"
+                        )}
                         style={{ width: `${progress}%` }}
                     />
                 </div>

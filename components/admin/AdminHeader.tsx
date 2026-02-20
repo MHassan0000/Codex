@@ -1,7 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Search, Menu } from "lucide-react";
 
 interface AdminHeaderProps {
     session: {
@@ -9,32 +8,28 @@ interface AdminHeaderProps {
             name?: string | null;
         };
     };
+    onMenuToggle: () => void;
 }
 
-const pageTitles: Record<string, { title: string; subtitle: string }> = {
-    "/admin": { title: "Dashboard", subtitle: "Monitor all library activity and manage resources here" },
-    "/admin/users": { title: "All Users", subtitle: "View and manage all registered library members" },
-    "/admin/books": { title: "All Books", subtitle: "Manage book inventory, add or remove titles" },
-    "/admin/books/new": { title: "Create a New Book", subtitle: "Add a new book to the library inventory" },
-    "/admin/borrow-requests": { title: "Borrow Requests", subtitle: "Review and approve pending book borrow requests" },
-    "/admin/account-requests": { title: "Account Requests", subtitle: "Review and approve new user account registrations" },
-};
-
-const AdminHeader = ({ session }: AdminHeaderProps) => {
-    const pathname = usePathname();
-    const pageInfo = pageTitles[pathname] || pageTitles["/admin"];
+const AdminHeader = ({ session, onMenuToggle }: AdminHeaderProps) => {
     const firstName = session?.user?.name?.split(" ")[0] || "Admin";
 
     return (
         <header className="admin-header">
+            <button
+                className="admin-menu-toggle"
+                onClick={onMenuToggle}
+                aria-label="Open sidebar"
+            >
+                <Menu size={22} />
+            </button>
+
             <div>
                 <h1 className="admin-header-title">
-                    {pathname === "/admin"
-                        ? `Welcome, ${firstName}`
-                        : pageInfo.title}
+                    Welcome, {firstName}
                 </h1>
                 <p className="admin-header-subtitle">
-                    {pageInfo.subtitle}
+                    Monitor and manage your library from one place
                 </p>
             </div>
 
