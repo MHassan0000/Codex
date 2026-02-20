@@ -15,6 +15,7 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
     "/admin": { title: "Dashboard", subtitle: "Monitor all library activity and manage resources here" },
     "/admin/users": { title: "All Users", subtitle: "View and manage all registered library members" },
     "/admin/books": { title: "All Books", subtitle: "Manage book inventory, add or remove titles" },
+    "/admin/books/new": { title: "Create a New Book", subtitle: "Add a new book to the library inventory" },
     "/admin/borrow-requests": { title: "Borrow Requests", subtitle: "Review and approve pending book borrow requests" },
     "/admin/account-requests": { title: "Account Requests", subtitle: "Review and approve new user account registrations" },
 };
