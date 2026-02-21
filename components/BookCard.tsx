@@ -6,7 +6,7 @@ import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BookCardProps {
-    id: number;
+    id: string;
     title: string;
     genre: string;
     coverColor: string;

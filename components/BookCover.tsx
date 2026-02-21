@@ -4,6 +4,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import BookCoverSvg from "@/components/BookCoverSvg";
 import Image from "next/image";
+import config from "@/lib/config";
 
 type BookCoverVariant = "extraSmall" | "small" | "medium" | "regular" | "wide";
 
@@ -22,12 +23,18 @@ interface Props {
     coverImage: string;
 }
 
+const resolveImageUrl = (src: string) => {
+    if (src.startsWith("http")) return src;
+    return `${config.env.imagekit.urlEndpoint}/${src}`;
+};
+
 const BookCover = ({
     className,
     variant = "regular",
     coverColor = "#012B48",
     coverImage = "https://placehold.co/400x600.png",
 }: Props) => {
+    const imageUrl = resolveImageUrl(coverImage);
     return (
         <div
             className={cn(
@@ -44,7 +51,7 @@ const BookCover = ({
                 style={{ left: "12%", width: "87.5%", height: "88%" }}
             >
                 <Image
-                    src={coverImage}
+                    src={imageUrl}
                     alt="Book cover"
                     fill
                     className="rounded-sm object-fill"

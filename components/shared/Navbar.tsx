@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Search, LogOut, User } from "lucide-react";
+import { Book, LogOut, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -52,10 +52,12 @@ export default function Navbar({ session }: { session: NavbarSession | null }) {
 
                     {/* Right actions */}
                     <div className="flex items-center gap-5">
-                        <button className="inline-flex items-center text-sm font-semibold tracking-widest gap-2 text-white rounded-sm hover:text-orange-accent transition-all duration-300">
-                            <Search size={14} />
-                            Search
-                        </button>
+                        <Link href="/library">
+                            <button className="inline-flex items-center text-sm font-semibold tracking-widest gap-2 text-white rounded-sm hover:text-orange-accent transition-all duration-300">
+                                <Book size={14} />
+                                Library
+                            </button>
+                        </Link>
 
                         {session?.user ? (
                             <div className="relative">
