@@ -6,6 +6,11 @@ import { desc } from "drizzle-orm";
 import { Plus } from "lucide-react";
 import config from "@/lib/config";
 
+const resolveImageUrl = (src: string) => {
+    if (src.startsWith("http")) return src;
+    return `${config.env.imagekit.urlEndpoint}/${src}`;
+};
+
 const BooksPage = async () => {
     const allBooks = await db
         .select()
@@ -53,7 +58,7 @@ const BooksPage = async () => {
                             </tr>
                         ) : (
                             allBooks.map((book) => (
-                                <tr key={book.id}>
+                                <tr key={book.id} className="admin-table-row-link">
                                     <td>
                                         <div className="admin-book-cell">
                                             <div
@@ -61,14 +66,19 @@ const BooksPage = async () => {
                                                 style={{ backgroundColor: book.coverColor }}
                                             >
                                                 <Image
-                                                    src={`${config.env.imagekit.urlEndpoint}${book.coverUrl}`}
+                                                    src={resolveImageUrl(book.coverUrl)}
                                                     alt={book.title}
                                                     width={40}
                                                     height={56}
                                                     className="admin-book-cover-img"
                                                 />
                                             </div>
-                                            <span className="admin-book-title">{book.title}</span>
+                                            <Link
+                                                href={`/admin/books/${book.id}`}
+                                                className="admin-book-title admin-row-link"
+                                            >
+                                                {book.title}
+                                            </Link>
                                         </div>
                                     </td>
                                     <td>{book.author}</td>
@@ -96,9 +106,9 @@ const BooksPage = async () => {
                                     </td>
                                     <td>
                                         <div className="admin-actions">
-                                            <button className="admin-action-btn edit" title="Edit">
+                                            <Link href={`/admin/books/${book.id}`} className="admin-action-btn edit" title="View">
                                                 ✎
-                                            </button>
+                                            </Link>
                                             <button className="admin-action-btn delete" title="Delete">
                                                 ✕
                                             </button>

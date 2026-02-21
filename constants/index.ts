@@ -1,6 +1,6 @@
 export const navigationLinks = [
   {
-    href: "/library",
+    href: "/Library",
     label: "Library",
   },
 

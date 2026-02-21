@@ -1,5 +1,6 @@
 import BookOverview from "@/components/BookOverview";
 import BookList from "@/components/Booklist";
+import Footer from "@/components/Footer";
 import { auth } from "@/auth";
 import { db } from "@/database/drizzle";
 import { books } from "@/database/schema";
@@ -23,6 +24,8 @@ export default async function Home() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 pb-16 lg:pb-24 space-y-12">
         <BookList title="Trending Books" books={latestBooks.slice(1)} />
       </div>
+
+      <Footer />
     </>
   );
 }

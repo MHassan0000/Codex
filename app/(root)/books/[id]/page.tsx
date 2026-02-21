@@ -43,7 +43,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                                 </h3>
                             </div>
 
-                            <div className="relative rounded-lg overflow-hidden border border-white/8 bg-white/[0.02]">
+                            <div className="relative rounded-lg overflow-hidden border border-white/8 bg-white/2">
                                 <BookVideo videoUrl={bookDetails.videoUrl} />
                             </div>
                         </section>
@@ -73,7 +73,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
                     {/* Sidebar — Quick Info */}
                     <aside className="lg:w-80 shrink-0">
                         <div className="lg:sticky lg:top-28 space-y-6">
-                            <div className="border border-white/8 rounded-lg bg-white/[0.02] p-6">
+                            <div className="border border-white/8 rounded-lg bg-white/2 p-6">
                                 <h4 className="text-xs font-semibold uppercase tracking-[2px] text-white/30 mb-5">
                                     Book Info
                                 </h4>

@@ -41,18 +41,19 @@ export default function Navbar({ session }: { session: NavbarSession | null }) {
                         <Image
                             src="/images/logo.png"
                             alt="Codex"
-                            width={50}
-                            height={50}
+                            width={45}
+                            height={45}
                             className="transition-transform duration-300 group-hover:scale-105"
                         />
-                        <span className="text-3xl font-semibold tracking-tight text-white/90 group-hover:text-orange-accent transition-colors duration-300">
+                        <span className="text-2xl md:text-3xl
+                         font-semibold tracking-tight text-white/90 group-hover:text-orange-accent transition-colors duration-300">
                             Codex
                         </span>
                     </Link>
 
                     {/* Right actions */}
                     <div className="flex items-center gap-5">
-                        <Link href="/library">
+                        <Link href="/Library">
                             <button className="inline-flex items-center text-sm font-semibold tracking-widest gap-2 text-white rounded-sm hover:text-orange-accent transition-all duration-300">
                                 <Book size={14} />
                                 Library
