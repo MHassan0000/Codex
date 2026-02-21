@@ -32,7 +32,7 @@ interface AdminSidebarProps {
 }
 
 const navItems = [
-    { href: "/admin", label: "Home", icon: LayoutDashboard },
+    { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/users", label: "All Users", icon: Users },
     { href: "/admin/books", label: "All Books", icon: BookCopy },
     { href: "/admin/borrow-requests", label: "Borrow Requests", icon: ClipboardList },

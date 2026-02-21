@@ -1,31 +1,24 @@
-import { db } from "@/database/drizzle";
-import { users, borrowRecords } from "@/database/schema";
-import { eq, sql, desc } from "drizzle-orm";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import Link from "next/link";
 import UserActions from "@/components/admin/UserActions";
+import { getAllUsers } from "@/lib/admin-actions/user";
+
+interface UserRecord {
+    id: string;
+    fullName: string;
+    email: string;
+    universityId: number;
+    universityCard: string;
+    status: string;
+    role: string;
+    createdAt: Date | null;
+    borrowCount: number;
+}
 
 const UsersPage = async () => {
-    const allUsers = await db
-        .select({
-            id: users.id,
-            fullName: users.fullName,
-            email: users.email,
-            universityId: users.universityId,
-            universityCard: users.universityCard,
-            status: users.status,
-            role: users.role,
-            createdAt: users.createdAt,
-            borrowCount:
-                sql<number>`CAST(COALESCE(COUNT(${borrowRecords.id}), 0) AS INTEGER)`.as(
-                    "borrow_count"
-                ),
-        })
-        .from(users)
-        .leftJoin(borrowRecords, eq(users.id, borrowRecords.userId))
-        .groupBy(users.id)
-        .orderBy(desc(users.createdAt));
+    const result = await getAllUsers();
+    const allUsers: UserRecord[] = result.success && result.data ? result.data : [];
 
     return (
         <div>

@@ -31,7 +31,7 @@ const AccountRequestsPage = async () => {
 
             {pendingUsers.length === 0 ? (
                 <div className="admin-table-empty">
-                    No pending account requests. All caught up! 🎉
+                    No pending account requests. All caught up!
                 </div>
             ) : (
                 <div className="admin-table-wrapper">

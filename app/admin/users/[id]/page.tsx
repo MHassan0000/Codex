@@ -1,6 +1,3 @@
-import { db } from "@/database/drizzle";
-import { users, borrowRecords, books } from "@/database/schema";
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
@@ -8,6 +5,21 @@ import Image from "next/image";
 import Link from "next/link";
 import config from "@/lib/config";
 import UserStatusActions from "@/components/admin/UserStatusActions"
+import { getUserById } from "@/lib/admin-actions/user";
+
+interface BorrowRecord {
+    id: string;
+    bookId: string;
+    borrowDate: string;
+    dueDate: string;
+    returnDate: string | null;
+    status: string;
+    bookTitle: string;
+    bookAuthor: string;
+    bookGenre: string;
+    bookCoverColor: string;
+    bookCoverUrl: string;
+}
 
 const resolveImageUrl = (src: string) => {
     if (src.startsWith("http")) return src;
@@ -21,31 +33,14 @@ const UserDetailPage = async ({
 }) => {
     const { id } = await params;
 
-    const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, id))
-        .limit(1);
+    const result = await getUserById(id);
 
-    if (!user) redirect("/admin/users");
+    if (!result.success || !result.data) redirect("/admin/users");
 
-    const borrowedRecords = await db
-        .select({
-            id: borrowRecords.id,
-            bookId: borrowRecords.bookId,
-            borrowDate: borrowRecords.borrowDate,
-            dueDate: borrowRecords.dueDate,
-            returnDate: borrowRecords.returnDate,
-            status: borrowRecords.status,
-            bookTitle: books.title,
-            bookAuthor: books.author,
-            bookGenre: books.genre,
-            bookCoverColor: books.coverColor,
-            bookCoverUrl: books.coverUrl,
-        })
-        .from(borrowRecords)
-        .innerJoin(books, eq(borrowRecords.bookId, books.id))
-        .where(eq(borrowRecords.userId, id));
+    const { user, borrowRecords: borrowedRecords } = result.data as {
+        user: any;
+        borrowRecords: BorrowRecord[];
+    };
 
     const universityCardUrl = resolveImageUrl(user.universityCard);
 
@@ -166,7 +161,7 @@ const UserDetailPage = async ({
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {borrowedRecords.map((record) => (
+                                        {borrowedRecords.map((record: any) => (
                                             <tr key={record.id}>
                                                 <td>
                                                     <div className="admin-book-cell">

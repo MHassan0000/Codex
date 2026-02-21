@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/database/drizzle";
-import { users, borrowRecords } from "@/database/schema";
-import { eq, sql } from "drizzle-orm";
+import { users, borrowRecords, books } from "@/database/schema";
+import { eq, sql, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export const getAllUsers = async () => {
@@ -25,7 +25,7 @@ export const getAllUsers = async () => {
       .from(users)
       .leftJoin(borrowRecords, eq(users.id, borrowRecords.userId))
       .groupBy(users.id)
-      .orderBy(users.createdAt);
+      .orderBy(desc(users.createdAt));
 
     return { success: true, data: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
@@ -45,8 +45,21 @@ export const getUserById = async (userId: string) => {
     if (!user) return { success: false, message: "User not found" };
 
     const records = await db
-      .select()
+      .select({
+        id: borrowRecords.id,
+        bookId: borrowRecords.bookId,
+        borrowDate: borrowRecords.borrowDate,
+        dueDate: borrowRecords.dueDate,
+        returnDate: borrowRecords.returnDate,
+        status: borrowRecords.status,
+        bookTitle: books.title,
+        bookAuthor: books.author,
+        bookGenre: books.genre,
+        bookCoverColor: books.coverColor,
+        bookCoverUrl: books.coverUrl,
+      })
       .from(borrowRecords)
+      .innerJoin(books, eq(borrowRecords.bookId, books.id))
       .where(eq(borrowRecords.userId, userId));
 
     return {

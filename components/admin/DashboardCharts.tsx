@@ -153,6 +153,8 @@ const DashboardCharts = ({ borrowTrend, genreData }: Props) => {
                                     fontSize: "12px",
                                     padding: "8px 12px",
                                 }}
+                                labelStyle={{ color: "#fff" }}
+                                itemStyle={{ color: "#fff" }}
                             />
                             <Bar
                                 dataKey="count"
