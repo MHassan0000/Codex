@@ -3,7 +3,7 @@
 import * as React from "react";
 
 const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 5000;
+const TOAST_REMOVE_DELAY = 1000;
 
 type ToastVariant = "default" | "destructive";
 
@@ -88,6 +88,11 @@ type Toast = Omit<ToasterToast, "id">;
 function toast({ ...props }: Toast) {
   const id = genId();
   dispatch({ type: "ADD_TOAST", toast: { ...props, id } });
+
+  // Auto-dismiss after 3 seconds
+  setTimeout(() => {
+    dispatch({ type: "DISMISS_TOAST", toastId: id });
+  }, 3000);
 
   return {
     id,

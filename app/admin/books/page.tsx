@@ -5,6 +5,7 @@ import { books } from "@/database/schema";
 import { desc } from "drizzle-orm";
 import { Plus } from "lucide-react";
 import config from "@/lib/config";
+import BookActions from "@/components/admin/BookActions";
 
 const resolveImageUrl = (src: string) => {
     if (src.startsWith("http")) return src;
@@ -106,12 +107,10 @@ const BooksPage = async () => {
                                     </td>
                                     <td>
                                         <div className="admin-actions">
-                                            <Link href={`/admin/books/${book.id}`} className="admin-action-btn edit" title="View">
+                                            <Link href={`/admin/books/${book.id}/edit`} className="admin-action-btn edit" title="Edit">
                                                 ✎
                                             </Link>
-                                            <button className="admin-action-btn delete" title="Delete">
-                                                ✕
-                                            </button>
+                                            <BookActions bookId={book.id} />
                                         </div>
                                     </td>
                                 </tr>
@@ -125,3 +124,4 @@ const BooksPage = async () => {
 };
 
 export default BooksPage;
+

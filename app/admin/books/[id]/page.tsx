@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import config from "@/lib/config";
 import BookVideo from "@/components/BookVideo";
+import BookActions from "@/components/admin/BookActions";
 import { ArrowLeft, Star, BookOpen, Users, Layers } from "lucide-react";
 
 const resolveImageUrl = (src: string) => {
@@ -27,14 +28,22 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     return (
         <div>
-            {/* Back link */}
-            <Link
-                href="/admin/books"
-                className="admin-detail-back"
-            >
-                <ArrowLeft size={16} />
-                Back to Books
-            </Link>
+            {/* Back link + actions */}
+            <div className="admin-detail-topbar">
+                <Link
+                    href="/admin/books"
+                    className="admin-detail-back"
+                >
+                    <ArrowLeft size={16} />
+                    Back to Books
+                </Link>
+                <div className="admin-actions">
+                    <Link href={`/admin/books/${id}/edit`} className="admin-detail-btn role" title="Edit">
+                        ✎ Edit
+                    </Link>
+                    <BookActions bookId={id} />
+                </div>
+            </div>
 
             {/* Header card */}
             <div className="admin-detail-header">

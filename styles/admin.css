@@ -1211,3 +1211,429 @@ textarea.book-form_input {
         text-align: center;
     }
 }
+
+/* ─── User Table Styles ─── */
+.admin-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.admin-user-avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+.admin-user-avatar-fallback {
+    background: rgba(255, 77, 0, 0.08);
+    color: #ff4d00;
+    font-size: 12px;
+    font-weight: 600;
+}
+.admin-user-avatar-fallback.large {
+    font-size: 28px;
+}
+.admin-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.admin-user-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.admin-user-email {
+    font-size: 11px;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.admin-center-cell {
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+}
+.admin-mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Role badges */
+.admin-role-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: capitalize;
+}
+.admin-role-badge.user {
+    background: #dbeafe;
+    color: #2563eb;
+}
+.admin-role-badge.admin {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+/* Status badges */
+.admin-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: capitalize;
+}
+.admin-status-badge.approved {
+    background: #dcfce7;
+    color: #16a34a;
+}
+.admin-status-badge.pending {
+    background: #fef3c7;
+    color: #d97706;
+}
+.admin-status-badge.rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Borrow status */
+.admin-borrow-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.admin-borrow-status.borrowed {
+    background: #fef3c7;
+    color: #d97706;
+}
+.admin-borrow-status.returned {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* ID Card link */
+.admin-id-card-link {
+    font-size: 12px;
+    font-weight: 500;
+    color: #2563eb;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+.admin-id-card-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* Action buttons */
+.admin-action-btn.approve {
+    color: #16a34a;
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+}
+.admin-action-btn.approve:hover {
+    background: #bbf7d0;
+}
+.admin-action-btn.reject {
+    color: #dc2626;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+}
+.admin-action-btn.reject:hover {
+    background: #fecaca;
+}
+.admin-action-btn.role-toggle {
+    color: #7c3aed;
+    background: #f3e8ff;
+    border: 1px solid #e9d5ff;
+    font-weight: 700;
+}
+.admin-action-btn.role-toggle:hover {
+    background: #e9d5ff;
+}
+
+/* ─── User Detail Page ─── */
+.admin-user-detail-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+    margin-top: 20px;
+}
+.admin-user-profile-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: sticky;
+    top: 90px;
+    align-self: start;
+}
+.admin-user-detail-avatar {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 14px;
+}
+.admin-user-detail-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+.admin-user-detail-email {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 16px;
+}
+.admin-user-detail-badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.admin-user-detail-info {
+    width: 100%;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+    margin-bottom: 20px;
+}
+.admin-user-detail-info div {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+.admin-user-detail-info dt {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+.admin-user-detail-info dd {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+}
+.admin-user-detail-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.admin-id-card-preview {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.admin-id-card-image {
+    width: 100%;
+    height: auto;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+}
+
+/* User detail action buttons */
+.admin-user-detail-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.admin-detail-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.admin-detail-btn.approve {
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+}
+.admin-detail-btn.approve:hover {
+    background: #15803d;
+}
+.admin-detail-btn.reject {
+    background: #fff;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+.admin-detail-btn.reject:hover {
+    background: #fee2e2;
+}
+.admin-detail-btn.role {
+    background: #f3e8ff;
+    color: #7c3aed;
+    border-color: #e9d5ff;
+}
+.admin-detail-btn.role:hover {
+    background: #e9d5ff;
+}
+.admin-detail-btn.danger {
+    background: #fff;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+.admin-detail-btn.danger:hover {
+    background: #fee2e2;
+}
+.admin-detail-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Inline confirm */
+.admin-inline-confirm {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+}
+.admin-inline-confirm p {
+    font-size: 12px;
+    color: #9a3412;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+.admin-inline-confirm-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* ─── Confirmation Dialog ─── */
+.admin-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.admin-confirm-dialog {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 28px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+.admin-confirm-dialog h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+.admin-confirm-dialog p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+.admin-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+.admin-confirm-cancel {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.admin-confirm-cancel:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+.admin-confirm-delete {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #dc2626;
+    background: #dc2626;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.admin-confirm-delete:hover {
+    background: #b91c1c;
+}
+.admin-confirm-delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Detail page topbar */
+.admin-detail-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* Back link for non-book detail pages */
+.admin-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+}
+.admin-back-link:hover {
+    color: #1e293b;
+}
+
+/* Section title for detail pages */
+.admin-detail-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* Responsive for user detail */
+@media (max-width: 860px) {
+    .admin-user-detail-grid {
+        grid-template-columns: 1fr;
+    }
+    .admin-user-profile-card {
+        position: static;
+    }
+}
