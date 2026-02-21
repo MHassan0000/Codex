@@ -1,13 +1,16 @@
 import BookCover from "@/components/BookCover";
-import { Book as BookIcon, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 import Link from "next/link";
+import BorrowBook from "./BorrowBook";
+import { db } from "@/database/drizzle";
+import { users } from "@/database/schema";
+import { eq } from "drizzle-orm";
 
 interface BookOverviewProps extends Book {
     userId: string;
 }
 
-const BookOverview = ({
+const BookOverview = async ({
     id,
     title,
     author,
@@ -18,7 +21,21 @@ const BookOverview = ({
     description,
     coverColor,
     coverUrl,
+    userId,
 }: BookOverviewProps) => {
+    const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+    const borrowingEligibility = {
+        isEligible: availableCopies > 0 && user?.status === "APPROVED",
+        message:
+            availableCopies <= 0
+                ? "Book is not available"
+                : "You are not eligible to borrow this book",
+    }
     return (
         <section className="w-full">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 py-10 sm:py-16 lg:py-24">
@@ -82,19 +99,11 @@ const BookOverview = ({
                             {description}
                         </p>
 
-                        <div className="mt-1 sm:mt-2">
-                            <Button
-                                variant="outline"
-                                className="border-orange-accent text-orange-accent hover:bg-orange-accent hover:text-black uppercase text-xs font-semibold tracking-widest px-5 sm:px-6 py-4 sm:py-5 rounded-none transition-all duration-300"
-                            >
-                                <span className="inline-flex items-center gap-2">
-                                    <span>
-                                        <BookIcon size={16} />
-                                    </span>
-                                    <span className="text-sm sm:text-base">Borrow Book Request</span>
-                                </span>
-                            </Button>
-                        </div>
+                        {user && (
+                            <div className="mt-1 sm:mt-2">
+                                <BorrowBook bookId={id} userId={userId} borrowingEligibility={borrowingEligibility} />
+                            </div>
+                        )}
                     </div>
 
                     {/* Right — Book cover visual */}

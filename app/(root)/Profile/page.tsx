@@ -3,13 +3,18 @@ import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import BookList from "@/components/Booklist";
-import { sampleBooks } from "@/constants";
+import BookCard from "@/components/BookCard";
 import { Mail, GraduationCap, CalendarDays, BookOpen, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { db } from "@/database/drizzle";
-import { users } from "@/database/schema";
+import { users, borrowRecords, books } from "@/database/schema";
 import { eq } from "drizzle-orm";
 import config from "@/lib/config";
+
+const resolveImageUrl = (src: string) => {
+    if (src.startsWith("http")) return src;
+    return `${config.env.imagekit.urlEndpoint}/${src}`;
+};
 
 const ProfilePage = async () => {
     const session = await auth();
@@ -25,17 +30,57 @@ const ProfilePage = async () => {
 
     const universityCardPath = dbUser[0]?.universityCard;
     const universityCard = universityCardPath
-        ? `${config.env.imagekit.urlEndpoint}${universityCardPath}`
+        ? resolveImageUrl(universityCardPath)
         : null;
     const universityId = dbUser[0]?.universityId;
 
-    const borrowedBooks = sampleBooks.slice(0, 4).map((book) => ({
-        id: book.id,
-        title: book.title,
-        genre: book.genre,
-        color: book.color,
-        cover: book.cover,
+    // Fetch borrowed books with book details
+    const borrowedRecords = await db
+        .select({
+            borrowId: borrowRecords.id,
+            borrowDate: borrowRecords.borrowDate,
+            dueDate: borrowRecords.dueDate,
+            returnDate: borrowRecords.returnDate,
+            status: borrowRecords.status,
+            bookId: books.id,
+            title: books.title,
+            author: books.author,
+            genre: books.genre,
+            coverColor: books.coverColor,
+            coverUrl: books.coverUrl,
+            rating: books.rating,
+            totalCopies: books.totalCopies,
+            availableCopies: books.availableCopies,
+            description: books.description,
+            videoUrl: books.videoUrl,
+            summary: books.summary,
+        })
+        .from(borrowRecords)
+        .innerJoin(books, eq(borrowRecords.bookId, books.id))
+        .where(eq(borrowRecords.userId, user.id!));
+
+    const borrowedBooks = borrowedRecords.map((r) => ({
+        borrowId: r.borrowId,
+        id: r.bookId,
+        title: r.title,
+        author: r.author,
+        genre: r.genre,
+        coverColor: r.coverColor,
+        coverUrl: r.coverUrl,
+        rating: r.rating,
+        totalCopies: r.totalCopies,
+        availableCopies: r.availableCopies,
+        description: r.description,
+        videoUrl: r.videoUrl,
+        summary: r.summary,
+        createdAt: null,
     }));
+
+    const totalBorrowed = borrowedRecords.length;
+    const returnedOnTime = borrowedRecords.filter((r) => r.status === "RETURNED").length;
+    const onTimeRate = totalBorrowed > 0
+        ? Math.round((returnedOnTime / totalBorrowed) * 100)
+        : 0;
 
     return (
         <section className="mx-auto max-w-7xl px-6 lg:px-10 py-10 sm:py-16">
@@ -95,9 +140,9 @@ const ProfilePage = async () => {
             {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-10">
                 {[
-                    { icon: BookOpen, label: "Books Borrowed", value: "4" },
-                    { icon: CalendarDays, label: "Days Active", value: "32" },
-                    { icon: GraduationCap, label: "On Time Returns", value: "100%" },
+                    { icon: BookOpen, label: "Books Borrowed", value: String(totalBorrowed) },
+                    { icon: CalendarDays, label: "Currently Borrowed", value: String(borrowedRecords.filter((r) => r.status === "BORROWED").length) },
+                    { icon: GraduationCap, label: "On Time Returns", value: totalBorrowed > 0 ? `${onTimeRate}%` : "—" },
                 ].map((stat) => (
                     <div
                         key={stat.label}
@@ -112,11 +157,33 @@ const ProfilePage = async () => {
 
             {/* Borrowed Books */}
             <div className="mt-14">
-                <BookList
-                    title="Borrowed Books"
-                    books={borrowedBooks}
-                    containerClassName=""
-                />
+                {borrowedBooks.length > 0 ? (
+                    <>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-8">
+                            Borrowed Books
+                        </h2>
+                        <ul className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+                            {borrowedBooks.map((book) => (
+                                <BookCard
+                                    key={book.borrowId}
+                                    id={book.id}
+                                    title={book.title}
+                                    genre={book.genre}
+                                    coverColor={book.coverColor}
+                                    coverImage={book.coverUrl}
+                                />
+                            ))}
+                        </ul>
+                    </>
+                ) : (
+                    <div className="text-center py-12">
+                        <BookOpen size={32} className="mx-auto text-white/15 mb-4" />
+                        <h3 className="text-lg font-bold text-white mb-2">No Borrowed Books</h3>
+                        <p className="text-sm text-white/40">
+                            You haven&apos;t borrowed any books yet. Browse the library to find your next read.
+                        </p>
+                    </div>
+                )}
             </div>
         </section>
     );
