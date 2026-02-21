@@ -1,20 +1,38 @@
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, ilike, or } from "drizzle-orm";
 import Image from "next/image";
+import { Suspense } from "react";
 import config from "@/lib/config";
 import AccountRequestActions from "@/components/admin/AccountRequestActions";
+import TableSearch from "@/components/admin/TableSearch";
 
 const resolveImageUrl = (src: string) => {
     if (src.startsWith("http")) return src;
     return `${config.env.imagekit.urlEndpoint}/${src}`;
 };
 
-const AccountRequestsPage = async () => {
+const AccountRequestsPage = async ({
+    searchParams,
+}: {
+    searchParams: Promise<{ query?: string }>;
+}) => {
+    const { query } = await searchParams;
+
+    const conditions = [eq(users.status, "PENDING")];
+
+    if (query && query.trim().length > 0) {
+        const searchFilter = or(
+            ilike(users.fullName, `%${query.trim()}%`),
+            ilike(users.email, `%${query.trim()}%`)
+        );
+        if (searchFilter) conditions.push(searchFilter);
+    }
+
     const pendingUsers = await db
         .select()
         .from(users)
-        .where(eq(users.status, "PENDING"))
+        .where(and(...conditions))
         .orderBy(users.createdAt);
 
     return (
@@ -25,13 +43,19 @@ const AccountRequestsPage = async () => {
                     <p className="admin-page-count">
                         {pendingUsers.length} pending request
                         {pendingUsers.length !== 1 ? "s" : ""}
+                        {query ? ` matching "${query}"` : ""}
                     </p>
                 </div>
+                <Suspense>
+                    <TableSearch placeholder="Search by name or email…" />
+                </Suspense>
             </div>
 
             {pendingUsers.length === 0 ? (
                 <div className="admin-table-empty">
-                    No pending account requests. All caught up!
+                    {query
+                        ? `No pending requests matching "${query}".`
+                        : "No pending account requests. All caught up!"}
                 </div>
             ) : (
                 <div className="admin-table-wrapper">

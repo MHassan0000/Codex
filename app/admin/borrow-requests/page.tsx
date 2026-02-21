@@ -1,10 +1,12 @@
 import { db } from "@/database/drizzle";
 import { borrowRecords, books, users } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { eq, ilike, or } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
 import config from "@/lib/config";
 import BorrowRequestActions from "@/components/admin/BorrowRequestActions";
+import TableSearch from "@/components/admin/TableSearch";
 
 const resolveImageUrl = (src: string) => {
     if (src.startsWith("http")) return src;
@@ -14,9 +16,17 @@ const resolveImageUrl = (src: string) => {
 const BorrowRequestsPage = async ({
     searchParams,
 }: {
-    searchParams: Promise<{ status?: string }>;
+    searchParams: Promise<{ status?: string; query?: string }>;
 }) => {
-    const { status: filterStatus } = await searchParams;
+    const { status: filterStatus, query } = await searchParams;
+
+    const searchCondition =
+        query && query.trim().length > 0
+            ? or(
+                ilike(books.title, `%${query.trim()}%`),
+                ilike(users.fullName, `%${query.trim()}%`)
+            )
+            : undefined;
 
     const records = await db
         .select({
@@ -36,6 +46,7 @@ const BorrowRequestsPage = async ({
         .from(borrowRecords)
         .innerJoin(books, eq(borrowRecords.bookId, books.id))
         .innerJoin(users, eq(borrowRecords.userId, users.id))
+        .where(searchCondition)
         .orderBy(borrowRecords.createdAt);
 
     const filtered = filterStatus
@@ -49,39 +60,52 @@ const BorrowRequestsPage = async ({
         RETURNED: records.filter((r) => r.status === "RETURNED").length,
     };
 
+    const buildFilterHref = (status?: string) => {
+        const params = new URLSearchParams();
+        if (status) params.set("status", status);
+        if (query) params.set("query", query);
+        const qs = params.toString();
+        return `/admin/borrow-requests${qs ? `?${qs}` : ""}`;
+    };
+
     return (
         <div>
             <div className="admin-page-header">
                 <div>
                     <h2 className="admin-page-title">Borrow Requests</h2>
                     <p className="admin-page-count">
-                        Manage all book borrow requests
+                        {query
+                            ? `${filtered.length} results matching "${query}"`
+                            : "Manage all book borrow requests"}
                     </p>
                 </div>
+                <Suspense>
+                    <TableSearch placeholder="Search by book title or borrower name…" />
+                </Suspense>
             </div>
 
             {/* Filter tabs */}
             <div className="admin-filter-tabs">
                 <Link
-                    href="/admin/borrow-requests"
+                    href={buildFilterHref()}
                     className={`admin-filter-tab ${!filterStatus ? "active" : ""}`}
                 >
                     All ({counts.all})
                 </Link>
                 <Link
-                    href="/admin/borrow-requests?status=PENDING"
+                    href={buildFilterHref("PENDING")}
                     className={`admin-filter-tab ${filterStatus === "PENDING" ? "active" : ""}`}
                 >
                     Pending ({counts.PENDING})
                 </Link>
                 <Link
-                    href="/admin/borrow-requests?status=BORROWED"
+                    href={buildFilterHref("BORROWED")}
                     className={`admin-filter-tab ${filterStatus === "BORROWED" ? "active" : ""}`}
                 >
                     Borrowed ({counts.BORROWED})
                 </Link>
                 <Link
-                    href="/admin/borrow-requests?status=RETURNED"
+                    href={buildFilterHref("RETURNED")}
                     className={`admin-filter-tab ${filterStatus === "RETURNED" ? "active" : ""}`}
                 >
                     Returned ({counts.RETURNED})

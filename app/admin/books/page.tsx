@@ -1,21 +1,39 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
 import { db } from "@/database/drizzle";
 import { books } from "@/database/schema";
-import { desc } from "drizzle-orm";
+import { desc, ilike, or } from "drizzle-orm";
 import { Plus } from "lucide-react";
 import config from "@/lib/config";
 import BookActions from "@/components/admin/BookActions";
+import TableSearch from "@/components/admin/TableSearch";
 
 const resolveImageUrl = (src: string) => {
     if (src.startsWith("http")) return src;
     return `${config.env.imagekit.urlEndpoint}/${src}`;
 };
 
-const BooksPage = async () => {
+const BooksPage = async ({
+    searchParams,
+}: {
+    searchParams: Promise<{ query?: string }>;
+}) => {
+    const { query } = await searchParams;
+
+    const searchCondition =
+        query && query.trim().length > 0
+            ? or(
+                ilike(books.title, `%${query.trim()}%`),
+                ilike(books.author, `%${query.trim()}%`),
+                ilike(books.genre, `%${query.trim()}%`)
+            )
+            : undefined;
+
     const allBooks = await db
         .select()
         .from(books)
+        .where(searchCondition)
         .orderBy(desc(books.createdAt));
 
     return (
@@ -25,13 +43,18 @@ const BooksPage = async () => {
                 <div>
                     <h2 className="admin-page-title">All Books</h2>
                     <p className="admin-page-count">
-                        {allBooks.length} {allBooks.length === 1 ? "book" : "books"} in the library
+                        {allBooks.length} {allBooks.length === 1 ? "book" : "books"}{query ? ` matching "${query}"` : " in the library"}
                     </p>
                 </div>
-                <Link href="/admin/books/new" className="admin-btn-primary">
-                    <Plus size={16} />
-                    Create a New Book
-                </Link>
+                <div className="admin-page-header-actions">
+                    <Suspense>
+                        <TableSearch placeholder="Search by title, author, or genre…" />
+                    </Suspense>
+                    <Link href="/admin/books/new" className="admin-btn-primary">
+                        <Plus size={16} />
+                        Create a New Book
+                    </Link>
+                </div>
             </div>
 
             {/* Table */}
@@ -53,7 +76,9 @@ const BooksPage = async () => {
                             <tr>
                                 <td colSpan={7}>
                                     <div className="admin-table-empty">
-                                        No books found. Create your first book to get started.
+                                        {query
+                                            ? `No books found matching "${query}".`
+                                            : "No books found. Create your first book to get started."}
                                     </div>
                                 </td>
                             </tr>
@@ -124,4 +149,3 @@ const BooksPage = async () => {
 };
 
 export default BooksPage;
-

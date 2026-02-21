@@ -2,11 +2,19 @@
 
 import { db } from "@/database/drizzle";
 import { users, borrowRecords, books } from "@/database/schema";
-import { eq, sql, desc } from "drizzle-orm";
+import { eq, sql, desc, ilike, or, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (query?: string) => {
   try {
+    const searchCondition =
+      query && query.trim().length > 0
+        ? or(
+            ilike(users.fullName, `%${query.trim()}%`),
+            ilike(users.email, `%${query.trim()}%`)
+          )
+        : undefined;
+
     const result = await db
       .select({
         id: users.id,
@@ -24,6 +32,7 @@ export const getAllUsers = async () => {
       })
       .from(users)
       .leftJoin(borrowRecords, eq(users.id, borrowRecords.userId))
+      .where(searchCondition)
       .groupBy(users.id)
       .orderBy(desc(users.createdAt));
 

@@ -1,7 +1,9 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import Link from "next/link";
+import { Suspense } from "react";
 import UserActions from "@/components/admin/UserActions";
+import TableSearch from "@/components/admin/TableSearch";
 import { getAllUsers } from "@/lib/admin-actions/user";
 
 interface UserRecord {
@@ -16,8 +18,13 @@ interface UserRecord {
     borrowCount: number;
 }
 
-const UsersPage = async () => {
-    const result = await getAllUsers();
+const UsersPage = async ({
+    searchParams,
+}: {
+    searchParams: Promise<{ query?: string }>;
+}) => {
+    const { query } = await searchParams;
+    const result = await getAllUsers(query);
     const allUsers: UserRecord[] = result.success && result.data ? result.data : [];
 
     return (
@@ -26,9 +33,12 @@ const UsersPage = async () => {
                 <div>
                     <h2 className="admin-page-title">All Users</h2>
                     <p className="admin-page-count">
-                        {allUsers.length} {allUsers.length === 1 ? "user" : "users"} registered
+                        {allUsers.length} {allUsers.length === 1 ? "user" : "users"}{query ? ` matching "${query}"` : " registered"}
                     </p>
                 </div>
+                <Suspense>
+                    <TableSearch placeholder="Search users by name or email…" />
+                </Suspense>
             </div>
 
             <div className="admin-table-wrapper">
@@ -50,7 +60,9 @@ const UsersPage = async () => {
                             <tr>
                                 <td colSpan={8}>
                                     <div className="admin-table-empty">
-                                        No users found.
+                                        {query
+                                            ? `No users found matching "${query}".`
+                                            : "No users found."}
                                     </div>
                                 </td>
                             </tr>
