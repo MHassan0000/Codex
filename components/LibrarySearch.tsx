@@ -56,8 +56,8 @@ const LibrarySearch = ({ books }: LibrarySearchProps) => {
             {/* ── Hero search banner ── */}
             <section className="relative w-full overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute inset-0 bg-gradient-to-b from-orange-accent/[0.04] via-transparent to-transparent" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-accent/[0.03] blur-[120px]" />
+                    <div className="absolute inset-0 bg-linear-to-b from-orange-accent/4 via-transparent to-transparent" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 rounded-full bg-orange-accent/3 blur-[120px]" />
                 </div>
 
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 py-14 sm:py-20 lg:py-28 text-center">
@@ -82,7 +82,7 @@ const LibrarySearch = ({ books }: LibrarySearchProps) => {
                                 value={query}
                                 onChange={(e) => handleSearch(e.target.value)}
                                 placeholder="Search by title, author, or genre..."
-                                className="w-full pl-12 pr-4 py-4 bg-white/[0.04] border border-white/10 rounded-sm text-sm text-white placeholder:text-white/30 outline-none focus:border-orange-accent/50 focus:bg-white/[0.06] transition-all duration-300"
+                                className="w-full pl-12 pr-4 py-4 bg-white/4 border border-white/10 rounded-sm text-sm text-white placeholder:text-white/30 outline-none focus:border-orange-accent/50 focus:bg-white/6 transition-all duration-300"
                             />
                         </div>
                     </div>
@@ -99,8 +99,8 @@ const LibrarySearch = ({ books }: LibrarySearchProps) => {
                             key={genre}
                             onClick={() => handleGenre(genre)}
                             className={`shrink-0 px-4 py-2 text-xs font-semibold uppercase tracking-widest rounded-sm border transition-all duration-300 ${selectedGenre === genre
-                                    ? "border-orange-accent bg-orange-accent/10 text-orange-accent"
-                                    : "border-white/8 text-white/40 hover:text-white/70 hover:border-white/15"
+                                ? "border-orange-accent bg-orange-accent/10 text-orange-accent"
+                                : "border-white/8 text-white/40 hover:text-white/70 hover:border-white/15"
                                 }`}
                         >
                             {genre}
@@ -144,7 +144,7 @@ const LibrarySearch = ({ books }: LibrarySearchProps) => {
                 ) : (
                     /* Empty state */
                     <div className="flex flex-col items-center justify-center py-20 sm:py-28">
-                        <div className="w-20 h-20 rounded-full bg-white/[0.03] border border-white/8 flex items-center justify-center mb-6">
+                        <div className="w-20 h-20 rounded-full bg-white/3 border border-white/8 flex items-center justify-center mb-6">
                             <BookOpen size={32} className="text-white/20" />
                         </div>
                         <h3 className="text-lg font-bold text-white mb-2">
@@ -188,8 +188,8 @@ const LibrarySearch = ({ books }: LibrarySearchProps) => {
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
                                     className={`w-9 h-9 flex items-center justify-center rounded-sm text-xs font-bold transition-all duration-300 ${page === safePage
-                                            ? "bg-orange-accent text-black"
-                                            : "border border-white/10 text-white/50 hover:text-white hover:border-white/30"
+                                        ? "bg-orange-accent text-black"
+                                        : "border border-white/10 text-white/50 hover:text-white hover:border-white/30"
                                         }`}
                                 >
                                     {page}
