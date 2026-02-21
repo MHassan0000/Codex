@@ -59,7 +59,10 @@ const ProfilePage = async () => {
         .innerJoin(books, eq(borrowRecords.bookId, books.id))
         .where(eq(borrowRecords.userId, user.id!));
 
-    const borrowedBooks = borrowedRecords.map((r) => ({
+    const activeBorrows = borrowedRecords.filter((r) => r.status === "BORROWED");
+    const pendingRequests = borrowedRecords.filter((r) => r.status === "PENDING");
+
+    const borrowedBooks = activeBorrows.map((r) => ({
         borrowId: r.borrowId,
         id: r.bookId,
         title: r.title,
@@ -76,7 +79,16 @@ const ProfilePage = async () => {
         createdAt: null,
     }));
 
-    const totalBorrowed = borrowedRecords.length;
+    const pendingBooks = pendingRequests.map((r) => ({
+        borrowId: r.borrowId,
+        id: r.bookId,
+        title: r.title,
+        genre: r.genre,
+        coverColor: r.coverColor,
+        coverUrl: r.coverUrl,
+    }));
+
+    const totalBorrowed = borrowedRecords.filter((r) => r.status !== "PENDING").length;
     const returnedOnTime = borrowedRecords.filter((r) => r.status === "RETURNED").length;
     const onTimeRate = totalBorrowed > 0
         ? Math.round((returnedOnTime / totalBorrowed) * 100)
@@ -141,7 +153,7 @@ const ProfilePage = async () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-10">
                 {[
                     { icon: BookOpen, label: "Books Borrowed", value: String(totalBorrowed) },
-                    { icon: CalendarDays, label: "Currently Borrowed", value: String(borrowedRecords.filter((r) => r.status === "BORROWED").length) },
+                    { icon: CalendarDays, label: "Currently Borrowed", value: String(activeBorrows.length) },
                     { icon: GraduationCap, label: "On Time Returns", value: totalBorrowed > 0 ? `${onTimeRate}%` : "—" },
                 ].map((stat) => (
                     <div
@@ -154,6 +166,30 @@ const ProfilePage = async () => {
                     </div>
                 ))}
             </div>
+
+            {/* Pending Requests */}
+            {pendingBooks.length > 0 && (
+                <div className="mt-14">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-2">
+                        Pending Requests
+                    </h2>
+                    <p className="text-sm text-white/40 mb-6">
+                        Waiting for admin approval
+                    </p>
+                    <ul className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+                        {pendingBooks.map((book) => (
+                            <BookCard
+                                key={book.borrowId}
+                                id={book.id}
+                                title={book.title}
+                                genre={book.genre}
+                                coverColor={book.coverColor}
+                                coverImage={book.coverUrl}
+                            />
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             {/* Borrowed Books */}
             <div className="mt-14">

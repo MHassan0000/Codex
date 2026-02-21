@@ -1637,3 +1637,39 @@ textarea.book-form_input {
         position: static;
     }
 }
+
+/* ─── Filter Tabs ─── */
+.admin-filter-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 4px;
+    width: fit-content;
+}
+.admin-filter-tab {
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.admin-filter-tab:hover {
+    color: #1e293b;
+    background: #f8fafc;
+}
+.admin-filter-tab.active {
+    background: #1e293b;
+    color: #ffffff;
+}
+
+/* Pending borrow status */
+.admin-borrow-status.pending {
+    background: #dbeafe;
+    color: #2563eb;
+}

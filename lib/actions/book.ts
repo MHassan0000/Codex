@@ -2,7 +2,7 @@
 
 import { db } from "@/database/drizzle";
 import { books, borrowRecords } from "@/database/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 import dayjs from "dayjs";
 
 export const borrowBook = async (params: BorrowBookParams) => {
@@ -16,7 +16,10 @@ export const borrowBook = async (params: BorrowBookParams) => {
         and(
           eq(borrowRecords.userId, userId),
           eq(borrowRecords.bookId, bookId),
-          eq(borrowRecords.status, "BORROWED")
+          or(
+            eq(borrowRecords.status, "PENDING"),
+            eq(borrowRecords.status, "BORROWED")
+          )
         )
       )
       .limit(1);
@@ -24,7 +27,7 @@ export const borrowBook = async (params: BorrowBookParams) => {
     if (existingBorrow.length) {
       return {
         success: false,
-        error: "You have already borrowed this book",
+        error: "You already have an active or pending request for this book",
       };
     }
 
@@ -43,21 +46,15 @@ export const borrowBook = async (params: BorrowBookParams) => {
 
     const dueDate = dayjs().add(7, "day").toDate().toDateString();
 
-    const record = await db.insert(borrowRecords).values({
+    await db.insert(borrowRecords).values({
       userId,
       bookId,
       dueDate,
-      status: "BORROWED",
+      status: "PENDING",
     });
-
-    await db
-      .update(books)
-      .set({ availableCopies: book[0].availableCopies - 1 })
-      .where(eq(books.id, bookId));
 
     return {
       success: true,
-      data: JSON.parse(JSON.stringify(record)),
     };
   } catch (error) {
     console.log(error);

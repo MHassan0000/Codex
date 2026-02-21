@@ -42,7 +42,8 @@ const BorrowBook = ({
             if (result.success) {
                 toast({
                     title: "Success",
-                    description: "Book borrowed successfully",
+                    description:
+                        "Borrow request submitted! Waiting for admin approval.",
                 });
 
                 router.push("/");
@@ -80,7 +81,7 @@ const BorrowBook = ({
                     )}
                 </span>
                 <span className="text-sm sm:text-base">
-                    {borrowing ? "Borrowing..." : "Borrow Book"}
+                    {borrowing ? "Submitting..." : "Borrow Book Request"}
                 </span>
             </span>
         </Button>
