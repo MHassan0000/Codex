@@ -107,6 +107,7 @@ export const updateUserStatus = async (
     await db.update(users).set({ status }).where(eq(users.id, userId));
     revalidatePath("/admin/users");
     revalidatePath(`/admin/users/${userId}`);
+    revalidatePath("/admin/account-requests");
     return { success: true };
   } catch (error) {
     console.log(error);

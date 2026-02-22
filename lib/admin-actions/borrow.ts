@@ -42,6 +42,8 @@ export const approveBorrowRequest = async (recordId: string) => {
       .where(eq(books.id, record.bookId));
 
     revalidatePath("/admin/borrow-requests");
+    revalidatePath(`/admin/books/${record.bookId}`);
+    revalidatePath("/admin/books");
     return { success: true };
   } catch (error) {
     console.log(error);
@@ -109,6 +111,8 @@ export const markBookReturned = async (recordId: string) => {
     }
 
     revalidatePath("/admin/borrow-requests");
+    revalidatePath(`/admin/books/${record.bookId}`);
+    revalidatePath("/admin/books");
     return { success: true };
   } catch (error) {
     console.log(error);

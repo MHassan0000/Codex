@@ -6,14 +6,10 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import config from "@/lib/config";
+import { resolveImageUrl } from "@/lib/image";
 import BookVideo from "@/components/BookVideo";
 import BookActions from "@/components/admin/BookActions";
 import { ArrowLeft, Star, BookOpen, Users, Layers } from "lucide-react";
-
-const resolveImageUrl = (src: string) => {
-    if (src.startsWith("http")) return src;
-    return `${config.env.imagekit.urlEndpoint}/${src}`;
-};
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const id = (await params).id;

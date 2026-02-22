@@ -15,6 +15,8 @@ export const createBook = async (params: BookParams) => {
       })
       .returning();
 
+    revalidatePath("/admin/books");
+
     return {
       success: true,
       data: JSON.parse(JSON.stringify(newBook[0])),

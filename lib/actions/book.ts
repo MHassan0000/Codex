@@ -4,6 +4,7 @@ import { db } from "@/database/drizzle";
 import { books, borrowRecords } from "@/database/schema";
 import { eq, and, or } from "drizzle-orm";
 import dayjs from "dayjs";
+import { revalidatePath } from "next/cache";
 
 export const borrowBook = async (params: BorrowBookParams) => {
   const { userId, bookId } = params;
@@ -52,6 +53,8 @@ export const borrowBook = async (params: BorrowBookParams) => {
       dueDate,
       status: "PENDING",
     });
+
+    revalidatePath("/Profile");
 
     return {
       success: true,

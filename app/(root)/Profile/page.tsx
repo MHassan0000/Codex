@@ -9,12 +9,7 @@ import Image from "next/image";
 import { db } from "@/database/drizzle";
 import { users, borrowRecords, books } from "@/database/schema";
 import { eq } from "drizzle-orm";
-import config from "@/lib/config";
-
-const resolveImageUrl = (src: string) => {
-    if (src.startsWith("http")) return src;
-    return `${config.env.imagekit.urlEndpoint}/${src}`;
-};
+import { resolveImageUrl } from "@/lib/image";
 
 const ProfilePage = async () => {
     const session = await auth();
@@ -23,7 +18,7 @@ const ProfilePage = async () => {
     const { user } = session;
 
     const dbUser = await db
-        .select({ universityCard: users.universityCard, universityId: users.universityId })
+        .select({ universityCard: users.universityCard, universityId: users.universityId, createdAt: users.createdAt })
         .from(users)
         .where(eq(users.id, user.id!))
         .limit(1);
@@ -33,6 +28,9 @@ const ProfilePage = async () => {
         ? resolveImageUrl(universityCardPath)
         : null;
     const universityId = dbUser[0]?.universityId;
+    const memberSince = dbUser[0]?.createdAt
+        ? new Date(dbUser[0].createdAt).getFullYear()
+        : new Date().getFullYear();
 
     // Fetch borrowed books with book details
     const borrowedRecords = await db
@@ -108,7 +106,7 @@ const ProfilePage = async () => {
                     <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
                         {user.name}
                     </h1>
-                    <p className="text-white/40 text-sm">Member since 2025</p>
+                    <p className="text-white/40 text-sm">Member since {memberSince}</p>
 
                     <div className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 mt-3">
                         <div className="flex items-center gap-2 text-sm text-white/50">

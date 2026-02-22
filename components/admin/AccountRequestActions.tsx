@@ -53,7 +53,7 @@ const AccountRequestActions = ({ userId }: Props) => {
                 disabled={loading}
                 title="Approve"
             >
-                ✓ Approve
+                ✓
             </button>
             <button
                 className="admin-action-btn reject"
@@ -61,7 +61,7 @@ const AccountRequestActions = ({ userId }: Props) => {
                 disabled={loading}
                 title="Reject"
             >
-                ✕ Reject
+                ✕
             </button>
         </div>
     );

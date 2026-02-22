@@ -4,6 +4,7 @@ import { getInitials } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import config from "@/lib/config";
+import { resolveImageUrl } from "@/lib/image";
 import UserStatusActions from "@/components/admin/UserStatusActions"
 import { getUserById } from "@/lib/admin-actions/user";
 
@@ -20,11 +21,6 @@ interface BorrowRecord {
     bookCoverColor: string;
     bookCoverUrl: string;
 }
-
-const resolveImageUrl = (src: string) => {
-    if (src.startsWith("http")) return src;
-    return `${config.env.imagekit.urlEndpoint}/${src}`;
-};
 
 const UserDetailPage = async ({
     params,

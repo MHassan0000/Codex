@@ -1,7 +1,7 @@
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
 import { eq, and, ilike, or } from "drizzle-orm";
-import Image from "next/image";
+
 import { Suspense } from "react";
 import config from "@/lib/config";
 import AccountRequestActions from "@/components/admin/AccountRequestActions";
