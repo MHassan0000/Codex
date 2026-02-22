@@ -1,6 +1,6 @@
 "use client";
 
-import { IKImage, ImageKitProvider, IKUpload, IKVideo } from "imagekitio-next";
+import { Image as IKImage, Video as IKVideo, ImageKitProvider, upload } from "@imagekit/next";
 import config from "@/lib/config";
 import { useRef, useState } from "react";
 import { Upload } from "lucide-react";
@@ -54,7 +54,7 @@ const FileUpload = ({
     onFileChange,
     value,
 }: Props) => {
-    const ikUploadRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<{ filePath: string | null }>({
         filePath: value ?? null,
     });
@@ -69,29 +69,9 @@ const FileUpload = ({
         text: variant === "dark" ? "text-light-100" : "text-dark-400",
     };
 
-    const onError = (error: any) => {
-        console.log(error);
-
-        toast({
-            title: `${type} upload failed`,
-            description: `Your ${type} could not be uploaded. Please try again.`,
-            variant: "destructive",
-        });
-    };
-
-    const onSuccess = (res: any) => {
-        setFile(res);
-        onFileChange(res.filePath);
-
-        toast({
-            title: `${type} uploaded successfully`,
-            description: `${res.filePath} uploaded successfully!`,
-        });
-    };
-
-    const onValidate = (file: File) => {
+    const onValidate = (selectedFile: File) => {
         if (type === "image") {
-            if (file.size > 20 * 1024 * 1024) {
+            if (selectedFile.size > 20 * 1024 * 1024) {
                 toast({
                     title: "File size too large",
                     description: "Please upload a file that is less than 20MB in size",
@@ -101,7 +81,7 @@ const FileUpload = ({
                 return false;
             }
         } else if (type === "video") {
-            if (file.size > 50 * 1024 * 1024) {
+            if (selectedFile.size > 50 * 1024 * 1024) {
                 toast({
                     title: "File size too large",
                     description: "Please upload a file that is less than 50MB in size",
@@ -114,26 +94,63 @@ const FileUpload = ({
         return true;
     };
 
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (!selectedFile) return;
+
+        if (!onValidate(selectedFile)) return;
+
+        setProgress(0);
+
+        try {
+            const authParams = await authenticator();
+
+            const result = await upload({
+                file: selectedFile,
+                fileName: selectedFile.name,
+                folder,
+                useUniqueFileName: true,
+                publicKey,
+                ...authParams,
+                onProgress: (event) => {
+                    const percent = Math.round((event.loaded / event.total) * 100);
+                    setProgress(percent);
+                },
+            });
+
+            if (result?.filePath) {
+                setFile({ filePath: result.filePath });
+                onFileChange(result.filePath);
+
+                toast({
+                    title: `${type} uploaded successfully`,
+                    description: `${result.filePath} uploaded successfully!`,
+                });
+            }
+        } catch (error: any) {
+            console.log(error);
+            toast({
+                title: `${type} upload failed`,
+                description: `Your ${type} could not be uploaded. Please try again.`,
+                variant: "destructive",
+            });
+        }
+
+        // Reset file input so same file can be re-selected
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
     return (
         <ImageKitProvider
-            publicKey={publicKey}
             urlEndpoint={urlEndpoint}
-            authenticator={authenticator}
         >
-            <IKUpload
-                ref={ikUploadRef}
-                onError={onError}
-                onSuccess={onSuccess}
-                useUniqueFileName={true}
-                validateFile={onValidate}
-                onUploadStart={() => setProgress(0)}
-                onUploadProgress={({ loaded, total }) => {
-                    const percent = Math.round((loaded / total) * 100);
-
-                    setProgress(percent);
-                }}
-                folder={folder}
+            <input
+                ref={fileInputRef}
+                type="file"
                 accept={accept}
+                onChange={handleFileSelect}
                 className="hidden"
             />
 
@@ -146,10 +163,7 @@ const FileUpload = ({
                 )}
                 onClick={(e) => {
                     e.preventDefault();
-                    if (ikUploadRef.current) {
-                        // @ts-ignore
-                        ikUploadRef.current?.click();
-                    }
+                    fileInputRef.current?.click();
                 }}
             >
                 <div className={cn(
@@ -186,13 +200,13 @@ const FileUpload = ({
                 (type === "image" ? (
                     <IKImage
                         alt={file.filePath!}
-                        path={file.filePath!}
+                        src={file.filePath!}
                         width={500}
                         height={300}
                     />
                 ) : type === "video" ? (
                     <IKVideo
-                        path={file.filePath!}
+                        src={file.filePath!}
                         controls={true}
                         className="h-96 w-full rounded-xl"
                     />
