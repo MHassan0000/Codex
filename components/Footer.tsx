@@ -59,14 +59,20 @@ const Footer = () => {
                             </h4>
                             <ul className="flex flex-col gap-3">
                                 <li>
-                                    <span className="text-sm text-white/50 cursor-default">
+                                    <Link
+                                        href="/privacy-policy"
+                                        className="text-sm text-white/50 hover:text-orange-accent transition-colors duration-300"
+                                    >
                                         Privacy Policy
-                                    </span>
+                                    </Link>
                                 </li>
                                 <li>
-                                    <span className="text-sm text-white/50 cursor-default">
+                                    <Link
+                                        href="/terms-of-service"
+                                        className="text-sm text-white/50 hover:text-orange-accent transition-colors duration-300"
+                                    >
                                         Terms of Service
-                                    </span>
+                                    </Link>
                                 </li>
                             </ul>
                         </div>
