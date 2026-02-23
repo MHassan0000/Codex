@@ -19,7 +19,7 @@ body:has(.admin-root)::after {
     color: #1e293b;
     display: flex;
     color-scheme: light;
-    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-family: var(--font-fredoka), var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
 /* Main area beside sidebar */
@@ -2212,7 +2212,7 @@ textarea.book-form_input {
     color: #94a3b8;
     font-size: 10px;
     font-weight: 600;
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-fredoka), system-ui, sans-serif;
     pointer-events: none;
     line-height: 1.4;
 }

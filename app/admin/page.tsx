@@ -47,18 +47,6 @@ const AdminDashboard = async () => {
 
     return (
         <div>
-            {/* Welcome */}
-            <div className="dashboard-welcome">
-                <div>
-                    <h1 className="dashboard-welcome-title">
-                        Welcome back, {session.user.name?.split(" ")[0]}
-                    </h1>
-                    <p className="dashboard-welcome-sub">
-                        Monitor and manage your library from here
-                    </p>
-                </div>
-            </div>
-
             {/* Stat Cards */}
             <div className="dashboard-stats-grid">
                 <div className="dashboard-stat-card">
