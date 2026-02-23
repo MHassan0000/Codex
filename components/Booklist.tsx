@@ -49,22 +49,22 @@ const BookList = ({ title, books, containerClassName }: BookListProps) => {
                     {title}
                 </h2>
 
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                     <button
                         onClick={() => scroll("left")}
                         disabled={!canScrollLeft}
-                        className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/50 hover:text-white hover:border-white/30 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed"
+                        className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/30 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed"
                         aria-label="Scroll left"
                     >
-                        <ChevronLeft size={18} />
+                        <ChevronLeft className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                     </button>
                     <button
                         onClick={() => scroll("right")}
                         disabled={!canScrollRight}
-                        className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 text-white/50 hover:text-white hover:border-white/30 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed"
+                        className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/30 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed"
                         aria-label="Scroll right"
                     >
-                        <ChevronRight size={18} />
+                        <ChevronRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                     </button>
                 </div>
             </div>
@@ -72,9 +72,9 @@ const BookList = ({ title, books, containerClassName }: BookListProps) => {
             <div className="relative mt-8">
                 {/* Left fade gradient */}
                 <div
-                    className="absolute left-0 top-0 bottom-0 w-12 z-10 pointer-events-none transition-opacity duration-300"
+                    className="absolute left-0 top-0 bottom-0 w-10 sm:w-16 z-10 pointer-events-none transition-opacity duration-300"
                     style={{
-                        background: "linear-gradient(to right, rgb(0 0 0 / 0.9), transparent)",
+                        background: "linear-gradient(to right, rgb(18 18 18 / 1), rgb(18 18 18 / 0.6), transparent)",
                         opacity: canScrollLeft ? 1 : 0,
                     }}
                 />
@@ -97,9 +97,9 @@ const BookList = ({ title, books, containerClassName }: BookListProps) => {
 
                 {/* Right fade gradient */}
                 <div
-                    className="absolute right-0 top-0 bottom-0 w-12 z-10 pointer-events-none transition-opacity duration-300"
+                    className="absolute right-0 top-0 bottom-0 w-10 sm:w-16 z-10 pointer-events-none transition-opacity duration-300"
                     style={{
-                        background: "linear-gradient(to left, rgb(0 0 0 / 0.9), transparent)",
+                        background: "linear-gradient(to left, rgb(18 18 18 / 1), rgb(18 18 18 / 0.6), transparent)",
                         opacity: canScrollRight ? 1 : 0,
                     }}
                 />
