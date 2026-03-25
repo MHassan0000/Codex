@@ -16,9 +16,13 @@ export const signInWithCredentials = async (
 ) => {
   const { email, password } = params;
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
-  const { success } = await ratelimit.limit(ip);
 
-  if (!success) return redirect("/too-fast");
+  try {
+    const { success } = await ratelimit.limit(ip);
+    if (!success) return redirect("/too-fast");
+  } catch (e) {
+    console.log("Rate limit check failed, allowing request:", e);
+  }
 
   try {
     const result = await signIn("credentials", {
@@ -41,9 +45,13 @@ export const signInWithCredentials = async (
 export const signUp = async (params: AuthCredentials) => {
   const { fullName, email, universityId, password, universityCard } = params;
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
-  const { success } = await ratelimit.limit(ip);
 
-  if (!success) return redirect("/too-fast");
+  try {
+    const { success } = await ratelimit.limit(ip);
+    if (!success) return redirect("/too-fast");
+  } catch (e) {
+    console.log("Rate limit check failed, allowing request:", e);
+  }
 
   const existingUser = await db
     .select()

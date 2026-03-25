@@ -204,12 +204,12 @@ body:has(.admin-root)::after {
 .admin-badge {
     margin-left: auto;
     border-radius: 9999px;
-    background: rgba(255, 77, 0, 0.08);
+    background: rgba(0, 0, 0, 0.08);
     padding: 3px 10px;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.1em;
-    color: #ff4d00;
+    color: black;
 }
 
 /* Nav */

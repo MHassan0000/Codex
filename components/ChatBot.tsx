@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { MessageSquare, X, Send, Sparkles, Trash2 } from "lucide-react";
+import { MessageSquare, X, Send, Bot, Trash2 } from "lucide-react";
 import "@/styles/chatbot.css";
 
 interface ChatMessage {
@@ -89,7 +89,15 @@ export default function ChatBot({ userId }: { userId?: string }) {
             });
 
             const data = await res.json();
-            if (data.reply) {
+            if (res.status === 429) {
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        role: "assistant",
+                        content: data.error || "You're sending messages too fast. Please wait a moment.",
+                    },
+                ]);
+            } else if (data.reply) {
                 setMessages((prev) => [
                     ...prev,
                     { role: "assistant", content: data.reply },
@@ -140,7 +148,7 @@ export default function ChatBot({ userId }: { userId?: string }) {
                 {/* Header */}
                 <div className="chatbot-header">
                     <div className="chatbot-header-icon">
-                        <Sparkles />
+                        <Bot />
                     </div>
                     <div className="chatbot-header-info">
                         <div className="chatbot-header-title">Codex AI</div>
@@ -173,9 +181,9 @@ export default function ChatBot({ userId }: { userId?: string }) {
                     {messages.length === 0 && !isLoading && (
                         <div className="chatbot-welcome">
                             <div className="chatbot-welcome-icon">
-                                <Sparkles />
+                                <Bot />
                             </div>
-                            <h3>Hey there! 👋</h3>
+                            <h3>Hey there!</h3>
                             <p>
                                 I&apos;m your library assistant. Ask me about
                                 books, borrowing, or anything library-related!

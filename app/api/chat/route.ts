@@ -4,6 +4,16 @@ import { db } from "@/database/drizzle";
 import { chatMessages } from "@/database/schema";
 import { eq, asc } from "drizzle-orm";
 import config from "@/lib/config";
+import { Ratelimit } from "@upstash/ratelimit";
+import redis from "@/database/redis";
+
+const MAX_MESSAGE_LENGTH = 2000;
+
+const chatRatelimit = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, "1m"),
+    prefix: "@codex/chat-ratelimit",
+});
 
 const SYSTEM_PROMPT = `You are Codex AI, a friendly and knowledgeable library assistant for a university library management system called Codex. You help students with:
 - Finding and recommending books
@@ -13,14 +23,31 @@ const SYSTEM_PROMPT = `You are Codex AI, a friendly and knowledgeable library as
 
 Keep responses concise, warm, and helpful. Use a friendly but professional tone. If asked about something unrelated to libraries or academics, politely redirect the conversation. Format responses with markdown when helpful.`;
 
+function mergeConsecutiveRoles(messages: { role: string; content: string }[]) {
+    const merged: { role: string; content: string }[] = [];
+    for (const msg of messages) {
+        const last = merged[merged.length - 1];
+        if (last && last.role === msg.role) {
+            last.content += "\n" + msg.content;
+        } else {
+            merged.push({ ...msg });
+        }
+    }
+    return merged;
+}
+
 async function callGemini(messages: { role: string; content: string }[]) {
     const apiKey = config.env.ai.geminiApiKey;
     if (!apiKey) return null;
 
-    const geminiMessages = messages.map((m) => ({
+    const safeMessages = mergeConsecutiveRoles(messages);
+
+    const geminiMessages = safeMessages.map((m) => ({
         role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
+        parts: [{ text: m.content.slice(0, 1000) }],
     }));
+
+    if (geminiMessages.length === 0) return null;
 
     const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
@@ -44,6 +71,11 @@ async function callOpenRouter(messages: { role: string; content: string }[]) {
     const apiKey = config.env.ai.openRouterApiKey;
     if (!apiKey) throw new Error("No AI API key configured");
 
+    const trimmedMessages = messages.map((m) => ({
+        role: m.role,
+        content: m.content.slice(0, 1000),
+    }));
+
     const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -54,7 +86,7 @@ async function callOpenRouter(messages: { role: string; content: string }[]) {
             model: "google/gemini-2.0-flash-001",
             messages: [
                 { role: "system", content: SYSTEM_PROMPT },
-                ...messages,
+                ...trimmedMessages,
             ],
         }),
     });
@@ -94,12 +126,24 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    try {
+        const { success } = await chatRatelimit.limit(session.user.id);
+        if (!success) {
+            return NextResponse.json(
+                { error: "Too many messages. Please wait a moment." },
+                { status: 429 }
+            );
+        }
+    } catch (e) {
+        console.log("Chat rate limit check failed, allowing request:", e);
+    }
+
     const { message } = await req.json();
     if (!message || typeof message !== "string" || message.trim().length === 0) {
         return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    const userMessage = message.trim();
+    const userMessage = message.trim().slice(0, MAX_MESSAGE_LENGTH);
 
     await db.insert(chatMessages).values({
         userId: session.user.id,

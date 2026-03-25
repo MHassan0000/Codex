@@ -1,7 +1,6 @@
 import BookOverview from "@/components/BookOverview";
 import BookList from "@/components/Booklist";
 import Footer from "@/components/Footer";
-import ChatBot from "@/components/ChatBot";
 import { auth } from "@/auth";
 import { db } from "@/database/drizzle";
 import { books } from "@/database/schema";
@@ -27,8 +26,6 @@ export default async function Home() {
       </div>
 
       <Footer />
-
-      <ChatBot userId={session?.user?.id} />
     </>
   );
 }

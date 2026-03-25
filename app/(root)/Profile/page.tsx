@@ -98,7 +98,7 @@ const ProfilePage = async () => {
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 items-start">
 
                 {/* ─── Left: Profile Card ─── */}
-                <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 sm:p-10">
+                <div className="bg-white/3 border border-white/6 rounded-2xl p-8 sm:p-10">
                     {/* Header row */}
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
                         <Avatar className="h-24 w-24 sm:h-28 sm:w-28 border-2 border-orange-accent/30 shadow-lg shadow-orange-accent/5 shrink-0">
@@ -128,14 +128,14 @@ const ProfilePage = async () => {
 
                     {/* University ID Card — inside the profile card */}
                     {universityCard && (
-                        <div className="mt-8 pt-8 border-t border-white/[0.06]">
+                        <div className="mt-8 pt-8 border-t border-white/6">
                             <div className="flex items-center gap-2 mb-4">
                                 <ShieldCheck size={16} className="text-orange-accent/70" />
                                 <h2 className="text-sm font-semibold uppercase tracking-widest text-white/50">
                                     University ID
                                 </h2>
                             </div>
-                            <div className="relative w-full max-w-sm rounded-lg overflow-hidden border border-white/[0.06] bg-white/[0.03] group">
+                            <div className="relative w-full max-w-sm rounded-lg overflow-hidden border border-white/6 bg-white/3 group">
                                 <Image
                                     src={universityCard}
                                     alt="University ID Card"
@@ -162,7 +162,7 @@ const ProfilePage = async () => {
                     ].map((stat) => (
                         <div
                             key={stat.label}
-                            className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 flex-1 flex flex-col gap-1.5 hover:border-orange-accent/20 transition-colors duration-300"
+                            className="bg-white/3 border border-white/6 rounded-xl p-5 flex-1 flex flex-col gap-1.5 hover:border-orange-accent/20 transition-colors duration-300"
                         >
                             <stat.icon size={18} className="text-orange-accent/60" />
                             <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>

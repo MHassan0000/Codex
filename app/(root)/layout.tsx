@@ -1,10 +1,12 @@
 import React from "react";
 import { auth } from "@/auth";
 import Navbar from "@/components/shared/Navbar";
+import ChatBot from "@/components/ChatBot";
 import { after } from "next/server";
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
 import { eq } from "drizzle-orm";
+
 export default async function RootGroupLayout({
     children,
 }: {
@@ -33,6 +35,7 @@ export default async function RootGroupLayout({
         <main className="flex flex-col min-h-screen overflow-x-hidden">
             <Navbar session={session} />
             <div className="flex-1 pt-20">{children}</div>
+            <ChatBot userId={session?.user?.id} />
         </main>
     );
-}
+}
