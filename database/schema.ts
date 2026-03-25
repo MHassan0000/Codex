@@ -68,3 +68,13 @@ export const borrowRecords = pgTable("borrow_records", {
     status: BORROW_STATUS_ENUM("status").default("BORROWED").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+export const chatMessages = pgTable("chat_messages", {
+    id: uuid("id").notNull().primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+        .references(() => users.id)
+        .notNull(),
+    role: varchar("role", { length: 20 }).notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
